@@ -1,6 +1,6 @@
-import javax.swing.plaf.nimbus.State;
+package db;
+
 import java.sql.*;
-import java.util.Properties;
 
 public class DBConn {
     protected Connection conn;
