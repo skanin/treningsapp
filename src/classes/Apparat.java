@@ -22,4 +22,6 @@ public class Apparat extends ActiveDomainObject {
     public void save(Connection conn) {
 
     }
+
+
 }
