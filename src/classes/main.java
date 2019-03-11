@@ -24,4 +24,6 @@ public class main {
     List<Gruppetime> gruppetimer = new ArrayList<Gruppetime>();
 
 
+
+
 }
