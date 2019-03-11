@@ -17,12 +17,10 @@ public class TestSelect extends DBConn {
 
     public void test(){
         try {
-            System.out.println("Hei");
             Statement st = conn.createStatement();
 
             ResultSet rs = st.executeQuery("SELECT * FROM Apparat;");
 
-            System.out.println(rs);
             while (rs.next())
             {
                 int id = rs.getInt("apparatID");
