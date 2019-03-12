@@ -9,6 +9,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+import add.Add;
 import db.DBConn;
 public class RunProgram extends DBConn {
     String err = "";
@@ -35,7 +36,7 @@ public class RunProgram extends DBConn {
 
     void printerr(){
         System.out.print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
-        if(err == "") return;
+        if(err.equals("")) return;
         System.out.println("ERROR: " + err);
         err = "";
     }
@@ -50,14 +51,24 @@ public class RunProgram extends DBConn {
         try{
             int i = Integer.parseInt(br.readLine());
             if(i >= 0 && i <= 3){
+                Add adder = new Add(conn);
+                String[] values;
                 switch(i){
                     case 0:
                         return false;
                     case 1:
-
+                        System.out.println("Skriv inn navn og beskrivelse av apparatet. Navnet kan ikke inneholde mellomrom");
+                        values = br.readLine().split(" ", 2);
+                        if(adder.addApparat(values[0], values[1])){
+                            System.out.println("Sucess");
+                        }
                         break;
                     case 2:
-
+                        System.out.println("Skriv inn navn og beskrivelse av øvelsen. Navnet kan ikke inneholde mellomrom");
+                        values = br.readLine().split(" ", 2);
+                        if(adder.addOvelse(values[0], values[1])){
+                            System.out.println("Sucess");
+                        }
                         break;
                     case 3:
 
