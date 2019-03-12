@@ -21,12 +21,12 @@ public class DBConn {
         } catch (Exception e) {
             throw new RuntimeException("Unable to connect", e);
         }
-    }
+    }/*
 
     public static void main(String[] args) {
         DBConn conn = new DBConn();
 
         conn.connect();
 
-    }
+    }*/
 }
