@@ -11,6 +11,8 @@ import java.util.GregorianCalendar;
 
 import add.Add;
 import db.DBConn;
+import get.Get;
+
 public class RunProgram extends DBConn {
     String err = "";
     /*
@@ -60,18 +62,24 @@ public class RunProgram extends DBConn {
                         System.out.println("Skriv inn navn og beskrivelse av apparatet. Navnet kan ikke inneholde mellomrom");
                         values = br.readLine().split(" ", 2);
                         if(adder.addApparat(values[0], values[1])){
-                            System.out.println("Sucess");
+                            System.out.println("Success");
                         }
                         break;
                     case 2:
                         System.out.println("Skriv inn navn og beskrivelse av øvelsen. Navnet kan ikke inneholde mellomrom");
                         values = br.readLine().split(" ", 2);
                         if(adder.addOvelse(values[0], values[1])){
-                            System.out.println("Sucess");
+                            System.out.println("Success");
                         }
                         break;
                     case 3:
-
+                        System.out.println("Skriv inn dato (YYYY-MM-DD), tidspunkt (HH:MM:SS)," +
+                                " varighet i minutter, personlig form på en skala fra 0-10 og et notat");
+                        values = br.readLine().split(" ", 5);
+                        if(adder.addTreningsokt(values[0], values[1], Integer.parseInt(values[2]),
+                                Integer.parseInt(values[3]), values[4])) {
+                            System.out.println("Success");
+                        }
                         break;
                 }
             }
@@ -91,8 +99,9 @@ public class RunProgram extends DBConn {
             int i = Integer.parseInt(br.readLine());
             if(i == 0) return false;
             if(i >= 1){
-
-
+                Get getter = new Get(conn);
+                getter.getNTreningsokter(i);
+                homescreen(br);
             }
             else{
                 err ="Nummeret må være høyere enn 0";

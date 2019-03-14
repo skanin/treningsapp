@@ -42,7 +42,19 @@ public class Add {
             return false;
         }
     }
-    
+
+    public boolean addTreningsokt(String dato, String tidspunkt, int varighet, int personligForm, String notat){
+        final String sql = "INSERT INTO Treningsokt(dato, tidspunkt, varighet, personligForm, notat) " +
+                "VALUES(?, ?, ?, ?, ?)";
+        try(PreparedStatement statement = conn.prepareStatement(sql)){
+            setParameters(statement, dato, tidspunkt, varighet, personligForm, notat);
+            statement.execute();
+            return true;
+        } catch(Exception e){
+            System.out.println(e);
+            return false;
+        }
+    }
 
     private static void setParameters(PreparedStatement statement, Object... parameters) throws SQLException {
         for (int i = 0; i < parameters.length; i++) {
