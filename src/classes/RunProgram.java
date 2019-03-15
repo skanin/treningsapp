@@ -113,21 +113,27 @@ public class RunProgram extends DBConn {
     }
     public boolean visresultatlog(BufferedReader br)throws IOException {
         printerr();
-        System.out.print("Fra hvilken dato ønsker du å vise resultatlog? skriv i formatet yyyy-mm-dd");
+        System.out.print("Fra hvilken dato ønsker du å vise resultatlog? skriv i formatet YYYY-MM-DD YYYY-DD-MM");
 
         try{
+            /*
             String begindato = br.readLine();
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd "); /*HH:mm:ssZ*/
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd ");
             Date begin = sdf.parse(begindato);
 
             System.out.print("Til hvilken dato ønsker du å vise resultatlog? yyyy-mm-dd");
             String sluttdato = br.readLine();
             Date slutt = sdf.parse(sluttdato);
-        }catch(NumberFormatException nfe){
+            */
+
+            String[] dates = br.readLine().split(" ");
+            Get getter = new Get(conn);
+            getter.getResultatLogg(dates[0], dates[1]);
+
+            homescreen(br);
+
+        }catch(NumberFormatException nfe) {
             err = "Ugyldig format";
-        }
-        catch( ParseException p){
-            err = "Ugyldig format på kalenderen";
         }
         return true;
     }
