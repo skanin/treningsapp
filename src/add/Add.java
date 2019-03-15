@@ -1,5 +1,6 @@
 package add;
 
+import javax.swing.plaf.nimbus.State;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.*;
@@ -54,6 +55,44 @@ public class Add {
             System.out.println(e);
             return false;
         }
+    }
+
+    public boolean addGruppe(String kategori, Object... parameters){
+        final String select = "SELECT * FROM OvelsesGruppe WHERE kategori = '" + kategori + "'";
+        final String insert = "INSERT INTO OvelsesGruppe(kategori) VALUES(?)";
+        final String reg = "INSERT INTO InngaarI(gruppeID, ovelseID) VALUES(?, ?)";
+        try {
+            Statement st = conn.createStatement();
+            ResultSet rs = st.executeQuery(select);
+            if(rs.next()){
+                return false;
+            }
+
+            PreparedStatement pst = conn.prepareStatement(insert);
+            setParameters(pst, kategori);
+            pst.execute();
+            if(parameters.length >= 1){
+                st = conn.createStatement();
+                rs = st.executeQuery(select);
+                if(rs.next()) {
+                    int gruppeID = rs.getInt("ovelsesGruppeID");
+                    for(int i = 0; i < parameters.length; i++){
+                        pst = conn.prepareStatement(reg);
+                        setParameters(pst, gruppeID, parameters[i]);
+                        pst.execute();
+                    }
+                }
+
+
+
+            }
+            return true;
+
+        } catch(Exception e){
+            System.out.println(e);
+            return false;
+        }
+
     }
 
     private static void setParameters(PreparedStatement statement, Object... parameters) throws SQLException {

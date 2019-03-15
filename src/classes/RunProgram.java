@@ -113,7 +113,7 @@ public class RunProgram extends DBConn {
     }
     public boolean visresultatlog(BufferedReader br)throws IOException {
         printerr();
-        System.out.print("Fra hvilken dato ønsker du å vise resultatlog? skriv i formatet YYYY-MM-DD YYYY-DD-MM");
+        System.out.print("Fra hvilken dato ønsker du å vise resultatlog? skriv i formatet YYYY-MM-DD YYYY-DD-MM\n");
 
         try{
             /*
@@ -138,6 +138,39 @@ public class RunProgram extends DBConn {
         return true;
     }
     public boolean lagøvelsegrupper(BufferedReader br)throws IOException {
+        printerr();
+        System.out.print("Ønsker du å lage øvelsesgruppe eller finne øvelser i samme gruppe? (lage/finne))\n");
+        try {
+            String i = br.readLine().toLowerCase();
+            switch (i){
+                case "finne":
+                    break;
+                case "lage":
+                    System.out.println("Skriv inn kategorien på din øvelsesgruppe. Hvis du i tillegg vil registrere øvelser på denne gruppen, skriv inn id'ene til øvelsene også.\n");
+                    String[] values = br.readLine().split(" ");
+                    Add adder = new Add(conn);
+                    if(values.length == 1){
+                        while(!adder.addGruppe(values[0])){
+                            System.out.println("Det finnes allerede en gruppe med denne kategorien\n");
+                            System.out.println("Skriv inn kategorien på din øvelsesgruppe igjen\n");
+                            values = br.readLine().split(" ");
+                        }
+                        System.out.println("La til gruppen med kategori " + values[0]);
+                        break;
+                    } else if(values.length >= 2){
+                        while(!adder.addGruppe(values[0], values[1])){
+                            System.out.println("Det finnes allerede en gruppe med denne kategorien\n");
+                            System.out.println("Skriv inn kategorien og id'en på din øvelsesgruppe igjen\n");
+                            values = br.readLine().split(" ");
+                        }
+                        System.out.println("La til gruppen med kategori " + values[0] + " og registrerte øvelsen med id " + values[1]);
+                        break;
+                    }
+            }
+        } catch(Exception e){
+            System.out.println(e);
+        }
+
         return true;
     }
     public boolean registrergruppetime(BufferedReader br)throws IOException {
