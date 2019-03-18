@@ -2,6 +2,7 @@ package classes;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.sql.SQLException;
 import java.text.FieldPosition;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -10,6 +11,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 import add.Add;
+import add.KategoriException;
 import db.DBConn;
 import get.Get;
 
@@ -139,40 +141,52 @@ public class RunProgram extends DBConn {
     }
     public boolean lagøvelsegrupper(BufferedReader br)throws IOException {
         printerr();
-        System.out.print("Ønsker du å lage øvelsesgruppe eller finne øvelser i samme gruppe? (lage/finne))\n");
+        System.out.print("Ønsker du å lage øvelsesgruppe eller finne øvelser i samme gruppe?\n1. Finne\n2. Lage");
         try {
-            String i = br.readLine().toLowerCase();
+            int i = Integer.parseInt(br.readLine());
             switch (i){
-                case "finne":
-                    break;
-                case "lage":
-                    System.out.println("Skriv inn kategorien på din øvelsesgruppe. Hvis du i tillegg vil registrere øvelser på denne gruppen, skriv inn id'ene til øvelsene også.\n");
-                    String[] values = br.readLine().split(" ");
-                    Add adder = new Add(conn);
-                    if(values.length == 1){
-                        while(!adder.addGruppe(values[0])){
-                            System.out.println("Det finnes allerede en gruppe med denne kategorien\n");
-                            System.out.println("Skriv inn kategorien på din øvelsesgruppe igjen\n");
-                            values = br.readLine().split(" ");
+                case 1:
+                    Get getter = new Get(conn);
+
+                    System.out.println("Skriv inn id'en til gruppen");
+                    boolean success = false;
+                    while(!success){
+                        try{
+                            int id = Integer.parseInt(br.readLine());
+                            getter.getGruppe(id);
+                            success = true;
+                        } catch (NumberFormatException e){
+                            System.out.println("Du må skrive inn et tall");
+                            System.out.println("Skriv inn id'en til gruppen");
                         }
-                        System.out.println("La til gruppen med kategori " + values[0]);
-                        break;
-                    } else if(values.length >= 2){
-                        while(!adder.addGruppe(values[0], values[1])){
-                            System.out.println("Det finnes allerede en gruppe med denne kategorien\n");
-                            System.out.println("Skriv inn kategorien og id'en på din øvelsesgruppe igjen\n");
-                            values = br.readLine().split(" ");
-                        }
-                        System.out.println("La til gruppen med kategori " + values[0] + " og registrerte øvelsen med id " + values[1]);
-                        break;
                     }
+
+
+
+
+
+                    break;
+                case 2:
+                    Add adder = new Add(conn);
+
+                    System.out.println("Skriv inn kategorien på din øvelsesgruppe\n");
+                    String value = br.readLine();
+                   try {
+                       while (!adder.addGruppe(value)){
+                           System.out.println("Kategorien finnes allerede, skriv inn kategorien på din øvelsesgruppe igjen\n");
+                           value = br.readLine();
+                       }
+                   } catch (SQLException e){
+                       System.out.println("DB error");
+                   }
             }
-        } catch(Exception e){
-            System.out.println(e);
+        } catch(NumberFormatException e){
+            System.out.println("Du må velge 1 eller 2");
         }
 
         return true;
     }
+
     public boolean registrergruppetime(BufferedReader br)throws IOException {
         return true;
     }

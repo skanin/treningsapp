@@ -39,6 +39,16 @@ public class Get {
         return true;
     }
 
+    public boolean getGruppe(int id){
+        final String sql = "SELECT Ovelse.navn FROM OvelsesGruppe " +
+                "JOIN InngaarI ON InngaarI.gruppeID = OvelsesGruppe.ovelsesGruppeID " +
+                "JOIN Ovelse ON InngaarI.ovelseID = Ovelse.ovelseID";
+
+        System.out.println("Her er øvelsene i samme gruppe: \n");
+        pstatement(sql);
+        return true;
+    }
+
     private void pstatement (String sql){
         try {
             Statement statement = conn.createStatement();

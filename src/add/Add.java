@@ -1,6 +1,5 @@
 package add;
 
-import javax.swing.plaf.nimbus.State;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.*;
@@ -57,7 +56,7 @@ public class Add {
         }
     }
 
-    public boolean addGruppe(String kategori, Object... parameters){
+    public boolean addGruppe(String kategori, Object... parameters) throws SQLException {
         final String select = "SELECT * FROM OvelsesGruppe WHERE kategori = '" + kategori + "'";
         final String insert = "INSERT INTO OvelsesGruppe(kategori) VALUES(?)";
         final String reg = "INSERT INTO InngaarI(gruppeID, ovelseID) VALUES(?, ?)";
@@ -82,17 +81,12 @@ public class Add {
                         pst.execute();
                     }
                 }
-
-
-
             }
-            return true;
 
-        } catch(Exception e){
-            System.out.println(e);
-            return false;
+        } catch(SQLException e){
+            System.out.println("DB problemer");
         }
-
+        return true;
     }
 
     private static void setParameters(PreparedStatement statement, Object... parameters) throws SQLException {
