@@ -3,17 +3,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.sql.SQLException;
-import java.text.FieldPosition;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 
 import add.Add;
-import add.KategoriException;
 import db.DBConn;
 import get.Get;
+import relasjoner.Relation;
 
 public class RunProgram extends DBConn {
     String err = "";
@@ -39,7 +33,7 @@ public class RunProgram extends DBConn {
     * */
 
     void printerr(){
-        System.out.print("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+        System.out.print("\n\n\n\n\n\n\n\n\n\n\n\n\n");
         if(err.equals("")) return;
         System.out.println("ERROR: " + err);
         err = "";
@@ -117,34 +111,30 @@ public class RunProgram extends DBConn {
         printerr();
         System.out.print("Fra hvilken dato ønsker du å vise resultatlog? skriv i formatet YYYY-MM-DD YYYY-DD-MM\n");
 
+
         try{
-            /*
-            String begindato = br.readLine();
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd ");
-            Date begin = sdf.parse(begindato);
-
-            System.out.print("Til hvilken dato ønsker du å vise resultatlog? yyyy-mm-dd");
-            String sluttdato = br.readLine();
-            Date slutt = sdf.parse(sluttdato);
-            */
-
             String[] dates = br.readLine().split(" ");
+            if(dates.length != 2){
+                throw new IllegalArgumentException();
+            }
             Get getter = new Get(conn);
             getter.getResultatLogg(dates[0], dates[1]);
 
             homescreen(br);
 
-        }catch(NumberFormatException nfe) {
+        }catch(IllegalArgumentException e) {
             err = "Ugyldig format";
         }
         return true;
     }
     public boolean lagøvelsegrupper(BufferedReader br)throws IOException {
         printerr();
-        System.out.print("Ønsker du å lage øvelsesgruppe eller finne øvelser i samme gruppe?\n1. Finne\n2. Lage");
+        System.out.print("Ønsker du å lage øvelsesgruppe eller finne øvelser i samme gruppe?\n1. Finne\n2. Lage\n0. Gå tilbake");
         try {
             int i = Integer.parseInt(br.readLine());
             switch (i){
+                case 0:
+                    return false;
                 case 1:
                     Get getter = new Get(conn);
 
@@ -160,11 +150,6 @@ public class RunProgram extends DBConn {
                             System.out.println("Skriv inn id'en til gruppen");
                         }
                     }
-
-
-
-
-
                     break;
                 case 2:
                     Add adder = new Add(conn);
@@ -181,13 +166,78 @@ public class RunProgram extends DBConn {
                    }
             }
         } catch(NumberFormatException e){
-            System.out.println("Du må velge 1 eller 2");
+            System.out.println("Du må velge 1, 2 eller 0");
         }
 
         return true;
     }
 
     public boolean registrergruppetime(BufferedReader br)throws IOException {
+        return true;
+    }
+
+    public boolean registrerRelasjoner(BufferedReader br) throws IOException{
+        printerr();
+        System.out.println("1. For å registrere øvelse på treningsøkt\n" +
+                "2. For å registrere apparat på øvelse\n" +
+                "3. For å registrere gruppetime på treningsøkt\n" +
+                "4. For å registrere gruppe på øvelse\n" +
+                "5. For å registrere øvelse på gruppetime\n" +
+                "0. For å gå tilbake");
+
+        try{
+            int i = Integer.parseInt(br.readLine());
+            Relation rel = new Relation(conn);
+            String[] values;
+            switch (i){
+                case 0:
+                    return false;
+                case 1:
+                    System.out.println("Skriv inn øvelseid'en og treningsøktid'en og prestasjon (1-10) med mellomrom. Eks (3 4 7): ");
+                    values = br.readLine().split(" ");
+                    while (values.length != 3){
+                        System.out.println("Ugyldig format, skriv inn øvelseid, treningsøktid og presjasjon");
+                        values = br.readLine().split(" ");
+                    }
+
+                    while (1 > Integer.parseInt(values[2]) || 10 < Integer.parseInt(values[2])){
+                        System.out.println("Prestasjon må være mellom 1 og 10");
+                        values = br.readLine().split(" ");
+                    }
+
+                    rel.regOvelseTreningsokt(Integer.parseInt(values[0]), Integer.parseInt(values[1]), Integer.parseInt(values[2]));
+                    System.out.println("La til øvelsen på treningsøkten!");
+                    break;
+                case 2:
+                    System.out.println("Skriv inn apparatid'en, øvelsesid'en, antall kilo og antall sett: ");
+                    values = br.readLine().split(" ");
+
+                    rel.regApparatOvelse(Integer.parseInt(values[0]), Integer.parseInt(values[1]),
+                            Integer.parseInt(values[2]), Integer.parseInt(values[3]));
+
+                    System.out.println("Registrerte apparat på øvelse.");
+                    break;
+                case 3:
+                    System.out.println("Skriv inn treningsøktid'en, gruppetimeid'en og prestasjon (1-10): ");
+                    values = br.readLine().split(" ");
+
+                    rel.regTreningsoktGruppetime(Integer.parseInt(values[0]), Integer.parseInt(values[1]), Integer.parseInt(values[2]));
+                    break;
+                case 4:
+                    System.out.println("Skriv inn gruppeid'en og øvelsesid'en: ");
+                    values = br.readLine().split(" ");
+
+                    rel.regOvelseGruppe(Integer.parseInt(values[0]), Integer.parseInt(values[1]));
+                    break;
+                case 5:
+                    System.out.println("Skriv inn gruppetimeID, ØvelseID og prestasjon: ");
+                    values = br.readLine().split(" ");
+
+                    rel.regOvelseGruppetime(Integer.parseInt(values[0]), Integer.parseInt(values[1]), Integer.parseInt(values[2]));
+            }
+        } catch(NumberFormatException nfe){
+            err = "Ugyldig format";
+        }
         return true;
     }
 
@@ -203,7 +253,7 @@ public class RunProgram extends DBConn {
         System.out.print("Enter Integer:  " + s);*/
         try{
             int i = Integer.parseInt(br.readLine());
-            if(i >= 1 && i <= 5){
+            if(i >= 1 && i <= 6){
                 switch(i){
                     case 1:
                         while(registerscreen(br)){}
@@ -219,6 +269,9 @@ public class RunProgram extends DBConn {
                         break;
                     case 5:
                         while(registrergruppetime(br));
+                        break;
+                    case 6:
+                        while (registrerRelasjoner(br)){}
                         break;
                 }
             }
