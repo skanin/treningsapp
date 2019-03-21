@@ -17,7 +17,7 @@ public class Get {
     }
 
     public void getNTreningsokter(int n){
-        final String sql = "SELECT * FROM Treningsokt JOIN OvelseITreningsokt ORDER BY dato DESC, tidspunkt DESC LIMIT " + n;
+        final String sql = "SELECT * FROM Treningsokt ORDER BY dato DESC, tidspunkt DESC LIMIT " + n;
         System.out.println("ID |      Dato     |   Tidspunkt |   Varighet   | Personlig Form |   Notat");
         System.out.println("---------------------------------------------------------------------------");
         pstatement(sql);

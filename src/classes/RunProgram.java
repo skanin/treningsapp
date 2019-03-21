@@ -90,7 +90,7 @@ public class RunProgram extends DBConn {
     }
     public boolean visgjennomførtetreniningsøkter(BufferedReader br)throws IOException {
         printerr();
-        System.out.print("Hvor mange gjennomførte treninger har du lyst å se?\n");
+        System.out.print("Hvor mange gjennomførte treninger har du lyst å se?\n0. for å gå tillbake: \n");
 
         try{
             int i = Integer.parseInt(br.readLine());
@@ -98,7 +98,7 @@ public class RunProgram extends DBConn {
             if(i >= 1){
                 Get getter = new Get(conn);
                 getter.getNTreningsokter(i);
-                homescreen(br);
+                return false;
             }
             else{
                 err ="Nummeret må være høyere enn 0";
@@ -121,7 +121,7 @@ public class RunProgram extends DBConn {
             Get getter = new Get(conn);
             getter.getResultatLogg(dates[0], dates[1]);
 
-            homescreen(br);
+            return false;
 
         }catch(IllegalArgumentException e) {
             err = "Ugyldig format";
