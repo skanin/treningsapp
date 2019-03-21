@@ -3,6 +3,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 
 import add.Add;
 import db.DBConn;
@@ -189,7 +190,7 @@ public class RunProgram extends DBConn {
         }
 
         Add adder = new Add(conn);
-
+        adder.addGruppetime(values[0], values[1]);
 
         return true;
     }
@@ -218,40 +219,66 @@ public class RunProgram extends DBConn {
                         values = br.readLine().split(" ");
                     }
 
-                    while (1 > Integer.parseInt(values[2]) || 10 < Integer.parseInt(values[2])){
+                    while (1 > Integer.parseInt(values[2]) || 10 < Integer.parseInt(values[2])) {
                         System.out.println("Prestasjon må være mellom 1 og 10");
                         values = br.readLine().split(" ");
                     }
+                    if(!rel.regOvelseTreningsokt(Integer.parseInt(values[0]), Integer.parseInt(values[1]), Integer.parseInt(values[2]))){
+                        System.out.println("Treninsøkten har allerede denne øvelsen");
+                        return true;
+                    } else {
+                        System.out.println("La til øvelsen på treningsøkten!");
+                    }
 
-                    rel.regOvelseTreningsokt(Integer.parseInt(values[0]), Integer.parseInt(values[1]), Integer.parseInt(values[2]));
-                    System.out.println("La til øvelsen på treningsøkten!");
+
                     break;
                 case 2:
                     System.out.println("Skriv inn apparatid'en, øvelsesid'en, antall kilo og antall sett: ");
                     values = br.readLine().split(" ");
 
-                    rel.regApparatOvelse(Integer.parseInt(values[0]), Integer.parseInt(values[1]),
-                            Integer.parseInt(values[2]), Integer.parseInt(values[3]));
+                    if(!rel.regApparatOvelse(Integer.parseInt(values[0]), Integer.parseInt(values[1]),
+                            Integer.parseInt(values[2]), Integer.parseInt(values[3]))){
+                        System.out.println("Dette apparatet har allerede denne øvelsen");
+                        return true;
+                    }else {
+                        System.out.println("Registrerte apparat på øvelse.");
+                    }
 
-                    System.out.println("Registrerte apparat på øvelse.");
                     break;
                 case 3:
                     System.out.println("Skriv inn treningsøktid'en, gruppetimeid'en og prestasjon (1-10): ");
                     values = br.readLine().split(" ");
 
-                    rel.regTreningsoktGruppetime(Integer.parseInt(values[0]), Integer.parseInt(values[1]), Integer.parseInt(values[2]));
+                    if(!rel.regTreningsoktGruppetime(Integer.parseInt(values[0]), Integer.parseInt(values[1]), Integer.parseInt(values[2]))){
+                        System.out.println("Treningsøkten har allerede denne gruppetimen");
+                        return true;
+                    }else {
+                        System.out.println("Registrerte gruppetimen på treningsøkten!");
+                    }
                     break;
                 case 4:
                     System.out.println("Skriv inn gruppeid'en og øvelsesid'en: ");
                     values = br.readLine().split(" ");
 
-                    rel.regOvelseGruppe(Integer.parseInt(values[0]), Integer.parseInt(values[1]));
+                    if(!rel.regOvelseGruppe(Integer.parseInt(values[0]), Integer.parseInt(values[1]))){
+                        System.out.println("Gruppen har allerede denne øvelsen!");
+                        return true;
+                    } else {
+                        System.out.println("Registrerte øvelsen på gruppen!");
+                    }
+
                     break;
                 case 5:
                     System.out.println("Skriv inn gruppetimeID, ØvelseID og prestasjon: ");
                     values = br.readLine().split(" ");
 
-                    rel.regOvelseGruppetime(Integer.parseInt(values[0]), Integer.parseInt(values[1]), Integer.parseInt(values[2]));
+                    if(!rel.regOvelseGruppetime(Integer.parseInt(values[0]), Integer.parseInt(values[1]), Integer.parseInt(values[2]))){
+                        System.out.println("Gruppetimen har allerede denne øvelsen!");
+                        return true;
+                    }else {
+                        System.out.println("Registrerte øvelsen på gruppetimen!");
+                    }
+                    break;
             }
         } catch(NumberFormatException nfe){
             err = "Ugyldig format";
