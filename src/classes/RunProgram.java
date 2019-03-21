@@ -2,6 +2,7 @@ package classes;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.sql.Array;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 
@@ -36,7 +37,7 @@ public class RunProgram extends DBConn {
     void printerr(){
         System.out.print("\n\n\n\n\n\n\n\n\n\n\n\n\n");
         if(err.equals("")) return;
-        System.out.println("ERROR: " + err);
+        System.out.println("ERROR: " + err + "\n");
         err = "";
     }
 
@@ -52,32 +53,37 @@ public class RunProgram extends DBConn {
             if(i >= 0 && i <= 3){
                 Add adder = new Add(conn);
                 String[] values;
-                switch(i){
-                    case 0:
-                        return false;
-                    case 1:
-                        System.out.println("Skriv inn navn og beskrivelse av apparatet. Navnet kan ikke inneholde mellomrom");
-                        values = br.readLine().split(" ", 2);
-                        if(adder.addApparat(values[0], values[1])){
-                            System.out.println("Success");
-                        }
-                        break;
-                    case 2:
-                        System.out.println("Skriv inn navn og beskrivelse av øvelsen. Navnet kan ikke inneholde mellomrom");
-                        values = br.readLine().split(" ", 2);
-                        if(adder.addOvelse(values[0], values[1])){
-                            System.out.println("Success");
-                        }
-                        break;
-                    case 3:
-                        System.out.println("Skriv inn dato (YYYY-MM-DD), tidspunkt (HH:MM:SS)," +
-                                " varighet i minutter, personlig form på en skala fra 0-10 og et notat");
-                        values = br.readLine().split(" ", 5);
-                        if(adder.addTreningsokt(values[0], values[1], Integer.parseInt(values[2]),
-                                Integer.parseInt(values[3]), values[4])) {
-                            System.out.println("Success");
-                        }
-                        break;
+                try {
+                    switch (i) {
+                        case 0:
+                            return false;
+                        case 1:
+                            System.out.println("Skriv inn navn og beskrivelse av apparatet. Navnet kan ikke inneholde mellomrom");
+                            values = br.readLine().split(" ", 2);
+                            if (adder.addApparat(values[0], values[1])) {
+                                System.out.println("Success");
+                            }
+                            break;
+                        case 2:
+                            System.out.println("Skriv inn navn og beskrivelse av øvelsen. Navnet kan ikke inneholde mellomrom");
+                            values = br.readLine().split(" ", 2);
+                            if (adder.addOvelse(values[0], values[1])) {
+                                System.out.println("Success");
+                            }
+                            break;
+                        case 3:
+                            System.out.println("Skriv inn dato (YYYY-MM-DD), tidspunkt (HH:MM:SS)," +
+                                    " varighet i minutter, personlig form på en skala fra 0-10 og et notat");
+                            values = br.readLine().split(" ", 5);
+                            if (adder.addTreningsokt(values[0], values[1], Integer.parseInt(values[2]),
+                                    Integer.parseInt(values[3]), values[4])) {
+                                System.out.println("Success");
+                            }
+                            break;
+                    }
+                }
+                catch(ArrayIndexOutOfBoundsException err){
+                    this.err = "Ugyldig format, må være: navn <mellomrom> beskrivelse, beskrivelse kan ikke være tom";
                 }
             }
             else{
@@ -98,6 +104,8 @@ public class RunProgram extends DBConn {
             if(i >= 1){
                 Get getter = new Get(conn);
                 getter.getNTreningsokter(i);
+                System.out.println("Trykk enter for å fortsette");
+                br.readLine();
                 return false;
             }
             else{
@@ -110,17 +118,24 @@ public class RunProgram extends DBConn {
     }
     public boolean visresultatlog(BufferedReader br)throws IOException {
         printerr();
-        System.out.print("Fra hvilken dato ønsker du å vise resultatlog? skriv i formatet YYYY-MM-DD YYYY-DD-MM\n");
+        System.out.print("Fra hvilken dato ønsker du å vise resultatlog? skriv i formatet YYYY-DD-MM YYYY-DD-MM\n");
+        System.out.print("Skriv 0 for å gå tilbake\n");
+
 
 
         try{
             String[] dates = br.readLine().split(" ");
+            if(dates.length == 1 && Integer.parseInt(dates[0]) == 0){
+                return false;
+            }
+
             if(dates.length != 2){
                 throw new IllegalArgumentException();
             }
             Get getter = new Get(conn);
             getter.getResultatLogg(dates[0], dates[1]);
-
+            System.out.println("Trykk enter for å fortsette");
+            br.readLine();
             return false;
 
         }catch(IllegalArgumentException e) {
@@ -130,7 +145,7 @@ public class RunProgram extends DBConn {
     }
     public boolean lagøvelsegrupper(BufferedReader br)throws IOException {
         printerr();
-        System.out.print("Ønsker du å lage øvelsesgruppe eller finne øvelser i samme gruppe?\n1. Finne\n2. Lage\n0. Gå tilbake");
+        System.out.print("Ønsker du å lage øvelsesgruppe eller finne øvelser i samme gruppe?\n1. Finne\n2. Lage\n0. Gå tilbake\n");
         try {
             int i = Integer.parseInt(br.readLine());
             switch (i){
@@ -145,6 +160,8 @@ public class RunProgram extends DBConn {
                         try{
                             int id = Integer.parseInt(br.readLine());
                             getter.getGruppe(id);
+                            System.out.println("Trykk enter for å fortsette");
+                            br.readLine();
                             success = true;
                         } catch (NumberFormatException e){
                             System.out.println("Du må skrive inn et tall");
@@ -175,7 +192,7 @@ public class RunProgram extends DBConn {
 
     public boolean registrergruppetime(BufferedReader br)throws IOException {
         printerr();
-        System.out.println("Skriv inn navnet på gruppetimen og en besrkivelse av timen, navnet kan ikke inneholde mellomrom \n" +
+        System.out.println("Skriv inn navnet på gruppetimen og en beskrivelse av timen, navnet kan ikke inneholde mellomrom \n" +
                 "Skriv 0 for å gå tilbake: ");
 
         String[] values = br.readLine().split(" ", 2);
@@ -322,7 +339,7 @@ public class RunProgram extends DBConn {
                 }
             }
             else{
-                err ="Nummeret må være mellom 1 og 5";
+                err ="Nummeret må være mellom 1 og 6";
             }
         }catch(NumberFormatException nfe){
             err ="Ugyldig format";
