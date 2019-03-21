@@ -173,6 +173,24 @@ public class RunProgram extends DBConn {
     }
 
     public boolean registrergruppetime(BufferedReader br)throws IOException {
+        printerr();
+        System.out.println("Skriv inn navnet på gruppetimen og en besrkivelse av timen, navnet kan ikke inneholde mellomrom \n" +
+                "Skriv 0 for å gå tilbake: ");
+
+        String[] values = br.readLine().split(" ", 2);
+
+        if(values.length == 1 && Integer.parseInt(values[0]) == 0){
+            return false;
+        }
+
+        while(values.length != 2){
+            System.out.println("Du må skrive inn navnet på gruppetimen, et mellomrom, deretter en beskrivelse av timen: ");
+            values = br.readLine().split(" ", 2);
+        }
+
+        Add adder = new Add(conn);
+
+
         return true;
     }
 
@@ -249,6 +267,7 @@ public class RunProgram extends DBConn {
         System.out.print("  3 for å se resultatlogg\n");
         System.out.print("  4 for å lage øvelsegrupper og finne øvelser i samme gruppe\n");
         System.out.print("  5 for å registrere gruppetime på en ny treningsøkt\n");
+        System.out.print("  6 for å registrere relasjoner\n");
         /*String s = br.readLine();
         System.out.print("Enter Integer:  " + s);*/
         try{

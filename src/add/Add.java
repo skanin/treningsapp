@@ -89,6 +89,20 @@ public class Add {
         return true;
     }
 
+    public boolean addGruppetime(String navn, String beskrivelse){
+        final String sql = "INSERT INTO Gruppetime(navn, beskrivelse) " +
+                "VALUES(?, ?)";
+
+        try(PreparedStatement statement = conn.prepareStatement(sql)){
+            setParameters(statement, navn, beskrivelse);
+            statement.execute();
+            return true;
+        } catch(Exception e){
+            System.out.println(e);
+            return false;
+        }
+    }
+
     private static void setParameters(PreparedStatement statement, Object... parameters) throws SQLException {
         for (int i = 0; i < parameters.length; i++) {
             // Parameters are 1-indexed
